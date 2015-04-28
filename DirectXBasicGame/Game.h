@@ -6,7 +6,7 @@
 
 #include "pch.h"
 #include "StepTimer.h"
-
+#include "AnimatedTexture.h"
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop
 class Game
@@ -61,6 +61,10 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView>  m_renderTargetView;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  m_depthStencilView;
     Microsoft::WRL::ComPtr<ID3D11Texture2D>         m_depthStencil;
+	std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
+	std::unique_ptr<AnimatedTexture> m_ship;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
+	DirectX::SimpleMath::Vector2 m_shipPos;
 
     // Game state
     DX::StepTimer                                   m_timer;

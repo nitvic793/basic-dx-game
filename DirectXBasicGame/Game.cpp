@@ -50,7 +50,7 @@ void Game::Update(DX::StepTimer const& timer)
     float elapsedTime = float(timer.GetElapsedSeconds());
 
     // TODO: Add your game logic here
-    elapsedTime;
+	m_ship->Update(elapsedTime);
 }
 
 // Draws the scene
@@ -63,6 +63,11 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here
+	m_spriteBatch->Begin();
+
+	m_ship->Draw(m_spriteBatch.get(), m_shipPos);
+
+	m_spriteBatch->End();
 
     Present();
 }
@@ -208,6 +213,13 @@ void Game::CreateDevice()
 #endif
 
     // TODO: Initialize device dependent objects here (independent of window size)
+	m_spriteBatch.reset(new SpriteBatch(m_d3dContext.Get()));
+
+	DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"shipanimated.png",
+		nullptr, m_texture.ReleaseAndGetAddressOf()));
+
+	m_ship.reset(new AnimatedTexture);
+	m_ship->Load(m_texture.Get(), 4, 20);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -334,6 +346,8 @@ void Game::CreateResources()
     m_d3dContext->RSSetViewports(1, &viewPort);
 
     // TODO: Initialize windows-size dependent objects here
+	m_shipPos.x = float(backBufferWidth / 2);
+	m_shipPos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
 }
 
 void Game::OnDeviceLost()
@@ -349,6 +363,9 @@ void Game::OnDeviceLost()
     m_d3dContext.Reset();
     m_d3dDevice1.Reset();
     m_d3dDevice.Reset();
+	m_ship.reset();
+	m_spriteBatch.reset();
+	m_texture.Reset();
 
     CreateDevice();
 
