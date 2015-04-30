@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <exception>
 #include <memory>
+#include <queue>
 
 #include "CommonStates.h"
 #include "DDSTextureLoader.h"

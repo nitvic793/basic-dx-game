@@ -180,7 +180,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             return true;
         }
         break;
-
+	case WM_KEYDOWN:
+		if (!s_minimized && game)
+		{
+			game->ProcessInput(wParam);
+		}
+		break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

@@ -27,10 +27,10 @@ void Game::Initialize(HWND window)
 
     // TODO: Change the timer settings if you want something other than the default variable timestep mode.
     // e.g. for 60 FPS fixed timestep update logic, call:
-    /*
+    
     m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
-    */
+    
 }
 
 // Executes basic game loop.
@@ -50,6 +50,8 @@ void Game::Update(DX::StepTimer const& timer)
     float elapsedTime = float(timer.GetElapsedSeconds());
 
     // TODO: Add your game logic here
+	ProcessInput();
+	m_stars->Update(elapsedTime * 200);
 	m_ship->Update(elapsedTime);
 }
 
@@ -63,9 +65,12 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here
+
 	m_spriteBatch->Begin();
 
+	m_stars->Draw(m_spriteBatch.get());
 	m_ship->Draw(m_spriteBatch.get(), m_shipPos);
+
 
 	m_spriteBatch->End();
 
@@ -218,6 +223,10 @@ void Game::CreateDevice()
 	DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"shipanimated.png",
 		nullptr, m_texture.ReleaseAndGetAddressOf()));
 
+	DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"starfield.png", nullptr, m_backgroundTex.ReleaseAndGetAddressOf()));
+	m_stars.reset(new ScrollingBackground);
+	m_stars->Load(m_backgroundTex.Get());
+
 	m_ship.reset(new AnimatedTexture);
 	m_ship->Load(m_texture.Get(), 4, 20);
 }
@@ -348,6 +357,37 @@ void Game::CreateResources()
     // TODO: Initialize windows-size dependent objects here
 	m_shipPos.x = float(backBufferWidth / 2);
 	m_shipPos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
+	m_stars->SetWindow(backBufferWidth, backBufferHeight);
+}
+
+//Pushes the input into the input queue
+void Game::ProcessInput(WPARAM wParam)
+{
+	m_inputQueue.push(wParam);
+}
+
+void Game::ProcessInput()
+{
+	while (!m_inputQueue.empty())
+	{
+		auto currentInput = m_inputQueue.front();
+		switch (currentInput)
+		{
+		case VK_LEFT:
+			m_shipPos.x-=10.f;
+			if (m_shipPos.x < 0.f)
+				m_shipPos.x = 0.f;
+			break;
+		case VK_RIGHT:
+			m_shipPos.x+=10.f;
+			if (m_shipPos.x > 600.f)
+				m_shipPos.x = 600.f;
+			break;
+		default:
+			break;
+		}
+		m_inputQueue.pop();
+	}
 }
 
 void Game::OnDeviceLost()
@@ -366,6 +406,8 @@ void Game::OnDeviceLost()
 	m_ship.reset();
 	m_spriteBatch.reset();
 	m_texture.Reset();
+	m_stars.reset();
+	m_backgroundTex.Reset();
 
     CreateDevice();
 

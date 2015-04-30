@@ -27,6 +27,9 @@
     <ClInclude Include="AnimatedTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ScrollingBackground.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -49,6 +52,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="shipanimated.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="starfield.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -149,6 +149,7 @@
     <ClInclude Include="AnimatedTexture.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="ScrollingBackground.h" />
     <ClInclude Include="StepTimer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +168,7 @@
   <ItemGroup>
     <Image Include="directx.ico" />
     <Image Include="shipanimated.png" />
+    <Image Include="starfield.png" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="settings.manifest" />
