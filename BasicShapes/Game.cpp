@@ -6,7 +6,7 @@
 #include "Game.h"
 
 using namespace DirectX;
-
+using namespace DirectX::SimpleMath;
 using Microsoft::WRL::ComPtr;
 
 // Constructor.
@@ -48,11 +48,10 @@ void Game::Tick()
 void Game::Update(DX::StepTimer const& timer)
 {
     float elapsedTime = float(timer.GetElapsedSeconds());
-
+	float totalTime = float(timer.GetTotalSeconds());
     // TODO: Add your game logic here
-	ProcessInput(elapsedTime);
-	m_stars->Update(elapsedTime * 200);
-	m_ship->Update(elapsedTime);
+    //m_world = Matrix::CreateRotationY(totalTime);
+	m_world = Matrix::CreateRotationY(totalTime);
 }
 
 // Draws the scene
@@ -65,15 +64,7 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here
-
-	m_spriteBatch->Begin();
-
-	m_stars->Draw(m_spriteBatch.get());
-	m_ship->Draw(m_spriteBatch.get(), m_shipPos);
-
-
-	m_spriteBatch->End();
-
+	m_shape->Draw(m_world, m_view, m_proj,Colors::White,m_texture.Get());
     Present();
 }
 
@@ -218,17 +209,11 @@ void Game::CreateDevice()
 #endif
 
     // TODO: Initialize device dependent objects here (independent of window size)
-	m_spriteBatch.reset(new SpriteBatch(m_d3dContext.Get()));
-
-	DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"shipanimated.png",
-		nullptr, m_texture.ReleaseAndGetAddressOf()));
-
-	DX::ThrowIfFailed(CreateWICTextureFromFile(m_d3dDevice.Get(), L"starfield.png", nullptr, m_backgroundTex.ReleaseAndGetAddressOf()));
-	m_stars.reset(new ScrollingBackground);
-	m_stars->Load(m_backgroundTex.Get());
-
-	m_ship.reset(new AnimatedTexture);
-	m_ship->Load(m_texture.Get(), 4, 20);
+	DX::ThrowIfFailed(
+		CreateWICTextureFromFile(m_d3dDevice.Get(), L"earth.bmp", nullptr, 
+		m_texture.ReleaseAndGetAddressOf()));
+	m_shape = GeometricPrimitive::CreateSphere(m_d3dContext.Get());
+	m_world = Matrix::Identity;
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -326,7 +311,7 @@ void Game::CreateResources()
 
             DX::ThrowIfFailed( dxgiFactory->CreateSwapChain( m_d3dDevice.Get(), &swapChainDesc, m_swapChain.ReleaseAndGetAddressOf() ) );
         }
-
+		
         // This template does not support 'full-screen' mode and prevents the ALT+ENTER shortcut from working
         dxgiFactory->MakeWindowAssociation(m_window, DXGI_MWA_NO_ALT_ENTER);
     }
@@ -355,41 +340,8 @@ void Game::CreateResources()
     m_d3dContext->RSSetViewports(1, &viewPort);
 
     // TODO: Initialize windows-size dependent objects here
-	m_shipPos.x = float(backBufferWidth / 2);
-	m_shipPos.y = float((backBufferHeight / 2) + (backBufferHeight / 4));
-	m_stars->SetWindow(backBufferWidth, backBufferHeight);
-}
-
-//Pushes the input into the input queue
-void Game::ProcessInput(WPARAM wParam)
-{
-	m_inputQueue.push(wParam);
-}
-
-void Game::ProcessInput(float elapsedTime)
-{
-	while (!m_inputQueue.empty())
-	{
-		auto currentInput = m_inputQueue.front();
-		short keyState;
-		switch (currentInput)
-		{
-		case VK_LEFT:
-			keyState = GetAsyncKeyState(VK_LEFT);
-			m_shipPos.x-=300.f*elapsedTime;
-			if (m_shipPos.x < 0.f)
-				m_shipPos.x = 0.f;
-			break;
-		case VK_RIGHT:
-			m_shipPos.x+=300.f*elapsedTime;
-			if (m_shipPos.x > 600.f)
-				m_shipPos.x = 600.f;
-			break;
-		default:
-			break;
-		}
-		m_inputQueue.pop();
-	}
+	m_view = Matrix::CreateLookAt(Vector3(2.f, 2.f, 2.f), Vector3::Zero, Vector3::UnitY);
+	m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, viewPort.Width / viewPort.Height, 0.1f, 10.f);
 }
 
 void Game::OnDeviceLost()
@@ -405,12 +357,8 @@ void Game::OnDeviceLost()
     m_d3dContext.Reset();
     m_d3dDevice1.Reset();
     m_d3dDevice.Reset();
-	m_ship.reset();
-	m_spriteBatch.reset();
+	m_shape.reset();
 	m_texture.Reset();
-	m_stars.reset();
-	m_backgroundTex.Reset();
-
     CreateDevice();
 
     CreateResources();

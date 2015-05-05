@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXBasicGame", "DirectXBasicGame\DirectXBasicGame.vcxproj", "{891264C7-1F8C-4C0A-A199-515B5A6898F3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicShapes", "BasicShapes\BasicShapes.vcxproj", "{774168E9-27CF-48F1-8D7E-C6820B743469}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,14 @@ Global
 		{891264C7-1F8C-4C0A-A199-515B5A6898F3}.Release|Win32.Build.0 = Release|Win32
 		{891264C7-1F8C-4C0A-A199-515B5A6898F3}.Release|x64.ActiveCfg = Release|x64
 		{891264C7-1F8C-4C0A-A199-515B5A6898F3}.Release|x64.Build.0 = Release|x64
+		{774168E9-27CF-48F1-8D7E-C6820B743469}.Debug|Win32.ActiveCfg = Debug|Win32
+		{774168E9-27CF-48F1-8D7E-C6820B743469}.Debug|Win32.Build.0 = Debug|Win32
+		{774168E9-27CF-48F1-8D7E-C6820B743469}.Debug|x64.ActiveCfg = Debug|x64
+		{774168E9-27CF-48F1-8D7E-C6820B743469}.Debug|x64.Build.0 = Debug|x64
+		{774168E9-27CF-48F1-8D7E-C6820B743469}.Release|Win32.ActiveCfg = Release|Win32
+		{774168E9-27CF-48F1-8D7E-C6820B743469}.Release|Win32.Build.0 = Release|Win32
+		{774168E9-27CF-48F1-8D7E-C6820B743469}.Release|x64.ActiveCfg = Release|x64
+		{774168E9-27CF-48F1-8D7E-C6820B743469}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
